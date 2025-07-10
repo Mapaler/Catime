@@ -63,26 +63,48 @@ void HandleWindowPaint(HWND hwnd, PAINTSTRUCT *ps) {
             }
         }
 
+        // if (CLOCK_SHOW_SECONDS) {
+        //     sprintf(time_text, "%d:%02d:%02d", 
+        //             hour, tm_info->tm_min, tm_info->tm_sec);
+        // } else {
+        //     sprintf(time_text, "%d:%02d", 
+        //             hour, tm_info->tm_min);
+        // }
+        char *format;
         if (CLOCK_SHOW_SECONDS) {
-            sprintf(time_text, "%d:%02d:%02d", 
-                    hour, tm_info->tm_min, tm_info->tm_sec);
+            format = "%H:%M:%S";
         } else {
-            sprintf(time_text, "%d:%02d", 
-                    hour, tm_info->tm_min);
+            format = "%H:%M";
         }
+        strftime(time_text, sizeof(time_text), format, tm_info);
+
     } else if (CLOCK_COUNT_UP) {
         // Count-up mode
         int hours = countup_elapsed_time / 3600;
         int minutes = (countup_elapsed_time % 3600) / 60;
         int seconds = countup_elapsed_time % 60;
 
+        // if (hours > 0) {
+        //     sprintf(time_text, "%d:%02d:%02d", hours, minutes, seconds);
+        // } else if (minutes > 0) {
+        //     sprintf(time_text, "%d:%02d", minutes, seconds);
+        // } else {
+        //     sprintf(time_text, "%d", seconds);
+        // }
+        time_t now = time(NULL);
+        struct tm *tm_info = localtime(&now);
+        tm_info->tm_hour = hours;
+        tm_info->tm_min = minutes;
+        tm_info->tm_sec = seconds;
+
+        char* format;
         if (hours > 0) {
-            sprintf(time_text, "%d:%02d:%02d", hours, minutes, seconds);
-        } else if (minutes > 0) {
-            sprintf(time_text, "%d:%02d", minutes, seconds);
-        } else {
-            sprintf(time_text, "%d", seconds);
+            format = "%H:%M:%S";
         }
+        else {
+            format = "%M:%S";
+        }
+        strftime(time_text, sizeof(time_text), format, tm_info);
     } else {
         // Countdown mode
         int remaining_time = CLOCK_TOTAL_TIME - countdown_elapsed_time;
@@ -103,14 +125,28 @@ void HandleWindowPaint(HWND hwnd, PAINTSTRUCT *ps) {
             int hours = remaining_time / 3600;
             int minutes = (remaining_time % 3600) / 60;
             int seconds = remaining_time % 60;
+            
+            // if (hours > 0) {
+            //     sprintf(time_text, "%d:%02d:%02d", hours, minutes, seconds);
+            // } else if (minutes > 0) {
+            //     sprintf(time_text, "%d:%02d", minutes, seconds);
+            // } else {
+            //     sprintf(time_text, "%d", seconds);
+            // }
+            time_t now = time(NULL);
+            struct tm *tm_info = localtime(&now);
+            tm_info->tm_hour = hours;
+            tm_info->tm_min = minutes;
+            tm_info->tm_sec = seconds;
 
+            char* format;
             if (hours > 0) {
-                sprintf(time_text, "%d:%02d:%02d", hours, minutes, seconds);
-            } else if (minutes > 0) {
-                sprintf(time_text, "%d:%02d", minutes, seconds);
-            } else {
-                sprintf(time_text, "%d", seconds);
+                format = "%H:%M:%S";
             }
+            else {
+                format = "%M:%S";
+            }
+            strftime(time_text, sizeof(time_text), format, tm_info);
         }
     }
 
@@ -132,6 +168,8 @@ void HandleWindowPaint(HWND hwnd, PAINTSTRUCT *ps) {
     DWORD quality = SetICMMode(memDC, ICM_ON);
     SetLayout(memDC, 0);
 
+    const COLORREF COLOR_WHITE = RGB(0xFF, 0xFF, 0xFF);
+    const COLORREF COLOR_BLACK = RGB(0, 0, 0);
     int r = 255, g = 255, b = 255;
     const char* colorToUse = IS_COLOR_PREVIEWING ? PREVIEW_COLOR : CLOCK_TEXT_COLOR;
     
@@ -144,14 +182,19 @@ void HandleWindowPaint(HWND hwnd, PAINTSTRUCT *ps) {
             sscanf(colorToUse, "%d,%d,%d", &r, &g, &b);
         }
     }
-    SetTextColor(memDC, RGB(r, g, b));
+    
+    COLORREF textColor = RGB(r, g, b);
+    COLORREF strokeColor = RGB(0xFF - r, 0xFF - g, 0xFF - b);
+    int strokeWidth = 2;
+
+    SetTextColor(memDC, textColor);
 
     if (CLOCK_EDIT_MODE) {
         HBRUSH hBrush = CreateSolidBrush(RGB(20, 20, 20));  // Dark gray background
         FillRect(memDC, &rect, hBrush);
         DeleteObject(hBrush);
     } else {
-        HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 0));
+        HBRUSH hBrush = CreateSolidBrush(COLOR_BLACK);
         FillRect(memDC, &rect, hBrush);
         DeleteObject(hBrush);
     }
@@ -177,26 +220,22 @@ void HandleWindowPaint(HWND hwnd, PAINTSTRUCT *ps) {
         int x = (rect.right - textSize.cx) / 2;
         int y = (rect.bottom - textSize.cy) / 2;
 
-        // If in edit mode, force white text and add outline effect
-        if (CLOCK_EDIT_MODE) {
-            SetTextColor(memDC, RGB(255, 255, 255));
-            
-            // Add black outline effect
-            SetTextColor(memDC, RGB(0, 0, 0));
-            TextOutA(memDC, x-1, y, time_text, strlen(time_text));
-            TextOutA(memDC, x+1, y, time_text, strlen(time_text));
-            TextOutA(memDC, x, y-1, time_text, strlen(time_text));
-            TextOutA(memDC, x, y+1, time_text, strlen(time_text));
-            
-            // Set back to white for drawing text
-            SetTextColor(memDC, RGB(255, 255, 255));
-            TextOutA(memDC, x, y, time_text, strlen(time_text));
-        } else {
-            SetTextColor(memDC, RGB(r, g, b));
-            
-            for (int i = 0; i < 8; i++) {
-                TextOutA(memDC, x, y, time_text, strlen(time_text));
+
+        SetTextColor(memDC, strokeColor);
+        // 在周围位置多次绘制文本以形成描边效果
+        for (int dx = -strokeWidth; dx <= strokeWidth; dx++)
+        {
+            for (int dy = -strokeWidth; dy <= strokeWidth; dy++)
+            {
+                // 跳过中心点（将在后面绘制）
+                if (dx == 0 && dy == 0) continue;
+
+                TextOutA(memDC, x + dx, y + dy, time_text, strlen(time_text));
             }
+        }
+        SetTextColor(memDC, textColor);
+        for (int i = 0; i < 8; i++) {
+            TextOutA(memDC, x, y, time_text, strlen(time_text));
         }
     }
 

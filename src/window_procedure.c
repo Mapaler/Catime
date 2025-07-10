@@ -2009,6 +2009,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
                     RegisterGlobalHotkeys(hwnd);
                     break;
                 }
+                case CLOCK_IDM_TIME_FORMAT_SETTINGS: {
+                    //ShowTimeFormatDialog(hwnd);
+                    //太麻烦了看不懂
+                    break;
+                }
                 case CLOCK_IDM_HELP: {
                     OpenUserGuide();
                     break;

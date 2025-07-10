@@ -1,0 +1,19 @@
+#include <windows.h>
+#include "resource.h"
+
+// Set UTF-8 encoding
+#pragma code_page(65001)
+
+// General input dialog - Used to set 正计时和倒计时的格式
+TIME_FORMAT_DIALOG DIALOGEX 0, 0, 200, 230
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Set Countdown"
+FONT 9, "Segoe UI"
+BEGIN
+    LTEXT           "从这个网址去找https://learn.microsoft.com/zh-cn/cpp/c-runtime-library/reference/strftime-wcsftime-strftime-l-wcsftime-l?view=msvc-170", TIME_FORMAT_STATIC, 10, 10, 180, 70
+    LTEXT           "正计时格式", TIME_FORMAT_FT_STATIC, 10, 85, 80, 20
+    EDITTEXT        TIME_FORMAT_FT_EDIT, 10, 110, 180, 20, ES_AUTOHSCROLL | ES_MULTILINE
+    LTEXT           "倒计时格式", TIME_FORMAT_CD_STATIC, 10, 135, 80, 20
+    EDITTEXT        TIME_FORMAT_CD_EDIT, 10, 160, 180, 20, ES_AUTOHSCROLL | ES_MULTILINE
+    PUSHBUTTON      "OK", TIME_FORMAT_BUTTON_OK, 140, 188, 50, 14
+END 

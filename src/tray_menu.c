@@ -518,6 +518,9 @@ void ShowColorMenu(HWND hwnd) {
     AppendMenuW(hMenu, MF_POPUP, (UINT_PTR)hColorSubMenu, 
                 GetLocalizedString(L"颜色", L"Color"));
 
+    // AppendMenuW(hMenu, MF_STRING, CLOCK_IDM_TIME_FORMAT_SETTINGS, 
+    //             GetLocalizedString(L"时间格式", L"Time Format"));
+
     AppendMenuW(hMenu, MF_SEPARATOR, 0, NULL);
 
     // About menu

@@ -2,11 +2,11 @@
 #define CATIME_RESOURCE_H
 
 /* Version and update information */
-#define CATIME_VERSION "1.1.2"
+#define CATIME_VERSION "1.1.2.1"
 #define CATIME_VERSION_MAJOR 1
 #define CATIME_VERSION_MINOR 1
 #define CATIME_VERSION_PATCH 2
-#define CATIME_VERSION_BUILD 0
+#define CATIME_VERSION_BUILD 1
 
 /* Credits link */
 #define CREDIT_LINK_URL L"https://space.bilibili.com/26087398"
@@ -65,6 +65,15 @@
 #define CLOCK_IDC_CUSTOMIZE_LEFT 112
 #define CLOCK_IDC_EDIT_MODE 113
 #define CLOCK_IDC_MODIFY_OPTIONS 114
+
+#define TIME_FORMAT_DIALOG 3000
+#define CLOCK_IDM_TIME_FORMAT_SETTINGS 3001 // Hotkey settings menu item ID
+#define TIME_FORMAT_STATIC 3002
+#define TIME_FORMAT_FT_STATIC 3003
+#define TIME_FORMAT_CD_STATIC 3004
+#define TIME_FORMAT_FT_EDIT 3005
+#define TIME_FORMAT_CD_EDIT 3006
+#define TIME_FORMAT_BUTTON_OK 3007
 
 /*==================================
  * Main menu items (120-199)
