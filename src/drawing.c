@@ -63,6 +63,7 @@ void HandleWindowPaint(HWND hwnd, PAINTSTRUCT *ps) {
             }
         }
 
+        tm_info->tm_hour = hour;
         // if (CLOCK_SHOW_SECONDS) {
         //     sprintf(time_text, "%d:%02d:%02d", 
         //             hour, tm_info->tm_min, tm_info->tm_sec);
@@ -98,7 +99,7 @@ void HandleWindowPaint(HWND hwnd, PAINTSTRUCT *ps) {
         tm_info->tm_sec = seconds;
 
         char* format;
-        if (hours > 0) {
+        if (hours > 0 || CLOCK_SHOW_SECONDS) {
             format = "%H:%M:%S";
         }
         else {
@@ -140,7 +141,7 @@ void HandleWindowPaint(HWND hwnd, PAINTSTRUCT *ps) {
             tm_info->tm_sec = seconds;
 
             char* format;
-            if (hours > 0) {
+            if (hours > 0 || CLOCK_SHOW_SECONDS) {
                 format = "%H:%M:%S";
             }
             else {

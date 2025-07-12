@@ -2,11 +2,11 @@
 #define CATIME_RESOURCE_H
 
 /* Version and update information */
-#define CATIME_VERSION "1.1.2.1"
+#define CATIME_VERSION "1.1.2.2"
 #define CATIME_VERSION_MAJOR 1
 #define CATIME_VERSION_MINOR 1
 #define CATIME_VERSION_PATCH 2
-#define CATIME_VERSION_BUILD 1
+#define CATIME_VERSION_BUILD 2
 
 /* Credits link */
 #define CREDIT_LINK_URL L"https://space.bilibili.com/26087398"
